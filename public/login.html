@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartEstate | Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-glass {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Floating Nav Animation */
+        .nav-item {
+            position: relative;
+            padding: 0.5rem 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #22d3ee, transparent);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-item:hover::after,
+        .nav-item.active::after {
+            width: 100%;
+        }
+
+        .nav-item:hover {
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+        }
+    </style>
+</head>
+
+<body class="bg-[#0f172a] text-slate-100 h-screen flex flex-col">
+
+    <!-- Modern Floating Navigation -->
+    <div class="fixed top-0 left-0 right-0 z-50">
+        <nav class="max-w-5xl mx-auto nav-glass rounded-b-2xl px-6 py-3 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-bold text-white tracking-tight">Smart<span
+                            class="text-cyan-400">Estate</span></span>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html"
+                        class="nav-item text-sm font-medium text-slate-300 hover:text-white transition-colors">Home</a>
+                    <a href="listings.html"
+                        class="nav-item text-sm font-medium text-slate-300 hover:text-white transition-colors">Marketplace</a>
+                    <a href="add-listing.html" id="listPropertyLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">List
+                        Property</a>
+                    <a href="predict.html"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Predictor</a>
+                    <a href="agent-inventory.html" id="inventoryLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Inventory</a>
+                    <a href="profile.html"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Profile</a>
+                    <a href="admin.html" id="adminLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Admin</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <a href="login.html" id="authLink"
+                        class="text-sm font-bold bg-white text-slate-900 px-5 py-2 rounded-xl transition-all border border-white">Login</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Login Form -->
+    <main class="flex-grow flex items-center justify-center px-4 pt-40 pb-12 relative overflow-hidden">
+        <!-- Glow Effects -->
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] -z-10">
+        </div>
+
+        <div
+            class="max-w-md w-full space-y-8 bg-[#1e293b]/50 backdrop-blur-xl p-10 rounded-3xl border border-slate-700 shadow-2xl">
+            <div>
+                <h2 id="authTitle" class="mt-6 text-center text-3xl font-extrabold text-white">
+                    Welcome Back
+                </h2>
+                <p class="mt-2 text-center text-sm text-slate-400">
+                    Sign in to access your predictions
+                </p>
+                <!-- Error Message Container -->
+                <p id="authMessage" class="mt-2 text-center text-sm font-medium hidden"></p>
+            </div>
+
+            <form id="authForm" class="mt-8 space-y-6">
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div class="mb-4">
+                        <label for="email" class="sr-only">Email address</label>
+                        <input id="email" name="email" type="email" autocomplete="email" required
+                            class="appearance-none rounded-xl relative block w-full px-3 py-3 border border-slate-600 placeholder-slate-500 text-white bg-slate-800/50 focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 focus:z-10 sm:text-sm transition-all"
+                            placeholder="Email address">
+                    </div>
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-slate-300 mb-1">Password</label>
+                        <input type="password" id="password" required
+                            class="w-full bg-[#1e293b] border border-slate-700 text-white text-sm rounded-xl focus:ring-cyan-500 focus:border-cyan-500 block p-3 placeholder-slate-500 transition-all"
+                            placeholder="••••••••">
+                    </div>
+
+                    <!-- Role Selection (Hidden by default, shown for Signup) -->
+                    <div id="roleField" class="hidden">
+                        <label for="role" class="block text-sm font-medium text-slate-300 mb-1">I am a</label>
+                        <select id="role"
+                            class="w-full bg-[#1e293b] border border-slate-700 text-white text-sm rounded-xl focus:ring-cyan-500 focus:border-cyan-500 block p-3 transition-all appearance-none cursor-pointer">
+                            <option value="buyer">Property Buyer</option>
+                            <option value="seller">Property Seller</option>
+                            <option value="agent">Real Estate Agent</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <button id="authBtn" type="submit"
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 shadow-lg shadow-cyan-500/30 transition-all hover:scale-[1.02]">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <svg class="h-5 w-5 text-cyan-200 group-hover:text-cyan-100"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                aria-hidden="true">
+                                <path fill-rule="evenodd"
+                                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        Sign In
+                    </button>
+                </div>
+            </form>
+
+            <div class="text-center">
+                <button id="googleLoginBtn"
+                    class="w-full flex justify-center py-3 px-4 border border-slate-600 rounded-xl text-sm font-medium text-slate-300 bg-transparent hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all mt-4">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-2"
+                        alt="Google">
+                    Sign in with Google
+                </button>
+            </div>
+
+            <p class="mt-2 text-center text-sm text-slate-400">
+                <span id="toggleText">Don't have an account?</span>
+                <a href="#" id="toggleAuth" class="font-medium text-cyan-400 hover:text-cyan-300 transition-colors">Sign
+                    up</a>
+            </p>
+        </div>
+    </main>
+
+    <script type="module" src="js/login.js"></script>
+</body>
+
+</html>

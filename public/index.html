@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartEstate | B-17 Property Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Map Styles */
+        #communityMap {
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            z-index: 1;
+        }
+
+        /* Dark Mode Map Tiles Filter */
+        .leaflet-layer,
+        .leaflet-control-zoom-in,
+        .leaflet-control-zoom-out,
+        .leaflet-control-attribution {
+            filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+        }
+
+        .leaflet-container {
+            background: #0f172a;
+        }
+
+        .nav-glass {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-item {
+            position: relative;
+            padding: 0.5rem 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #22d3ee, transparent);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-item:hover::after,
+        .nav-item.active::after {
+            width: 100%;
+        }
+
+        .nav-item:hover {
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .nav-item:hover::after {
+            width: 100%;
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.15) 0%, transparent 50%);
+        }
+    </style>
+</head>
+
+<body class="text-slate-100">
+
+    <!-- Navigation -->
+    <!-- Modern Floating Navigation -->
+    <div class="fixed top-0 left-0 right-0 z-50">
+        <nav class="max-w-5xl mx-auto nav-glass rounded-b-2xl px-6 py-3 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-bold text-white tracking-tight">Smart<span
+                            class="text-cyan-400">Estate</span></span>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html"
+                        class="nav-item active text-sm font-medium text-white transition-colors">Home</a>
+                    <a href="listings.html"
+                        class="nav-item text-sm font-medium text-slate-300 hover:text-white transition-colors">Marketplace</a>
+                    <a href="add-listing.html" id="listPropertyLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">List
+                        Property</a>
+                    <a href="predict.html"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Predictor</a>
+                    <a href="agent-inventory.html" id="inventoryLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Inventory</a>
+                    <a href="profile.html"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Profile</a>
+                    <a href="admin.html" id="adminLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Admin</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <a href="login.html" id="authLink"
+                        class="text-sm font-bold bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-xl transition-all border border-white/10">Login</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10">
+
+        <!-- Hero Section -->
+        <div class="text-center py-16 lg:py-24 relative">
+            <!-- Glow Effect -->
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[100px] -z-10">
+            </div>
+
+            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
+                <span class="block">Intelligent Real Estate for</span>
+                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">B-17
+                    Islamabad</span>
+            </h1>
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-slate-400">
+                Get accurate market value predictions instantly using advanced AI trained on B-17 market data.
+            </p>
+            <div class="mt-8 flex justify-center">
+                <div class="inline-flex rounded-md shadow">
+                    <a href="predict.html"
+                        class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-bold rounded-full text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-lg shadow-cyan-500/30 transition-all hover:scale-105">
+                        Try the Predictor
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Section -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-16">
+            <div
+                class="bg-[#1e293b]/50 backdrop-blur-sm overflow-hidden shadow-lg shadow-black/20 rounded-2xl border border-slate-700/50">
+                <div class="px-4 py-5 sm:p-6 text-center">
+                    <dt class="text-sm font-medium text-slate-400 truncate">Predictions Made</dt>
+                    <dd class="mt-1 text-3xl font-bold text-white drop-shadow-md" id="totalPredictions">-</dd>
+                </div>
+            </div>
+            <div
+                class="bg-[#1e293b]/50 backdrop-blur-sm overflow-hidden shadow-lg shadow-black/20 rounded-2xl border border-slate-700/50">
+                <div class="px-4 py-5 sm:p-6 text-center">
+                    <dt class="text-sm font-medium text-slate-400 truncate">Avg. House Price</dt>
+                    <dd class="mt-1 text-3xl font-bold text-cyan-400 drop-shadow-md" id="avgPrice">-</dd>
+                </div>
+            </div>
+            <div
+                class="bg-[#1e293b]/50 backdrop-blur-sm overflow-hidden shadow-lg shadow-black/20 rounded-2xl border border-slate-700/50">
+                <div class="px-4 py-5 sm:p-6 text-center">
+                    <dt class="text-sm font-medium text-slate-400 truncate">Active Market</dt>
+                    <dd class="mt-1 text-3xl font-bold text-white drop-shadow-md" id="topLocation">-</dd>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div
+            class="bg-[#1e293b]/80 shadow-2xl rounded-3xl mb-12 p-8 border border-slate-700/50 relative overflow-hidden">
+            <!-- Subtle Grid Background -->
+            <div
+                class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-20">
+            </div>
+
+            <h3 class="text-xl leading-6 font-bold text-white mb-6 flex items-center gap-2">
+                <span class="w-1 h-6 bg-cyan-500 rounded-full"></span>
+                Market Insights: <span class="text-cyan-400">Average Price by Sector</span>
+            </h3>
+            <div class="relative h-[450px] w-full">
+                <canvas id="accuracyChart"></canvas>
+            </div>
+            <p class="text-center text-sm text-slate-500 mt-6 italic">*Click on any bar to view the specific property
+                details used for that prediction.</p>
+        </div>
+
+        <!-- Hidden Detail View for Graph Clicks -->
+        <div id="predictionDetails"
+            class="hidden bg-slate-800/80 backdrop-blur-md rounded-2xl p-6 border border-cyan-500/30 shadow-2xl mb-12 animate-fade-in relative z-10">
+            <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Prediction Details
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-sm text-slate-400 mb-1">Price Estimate</p>
+                    <p class="text-2xl font-bold text-cyan-400" id="detailPrice">-</p>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-400 mb-1">Property Location</p>
+                    <p class="text-xl font-medium text-white" id="detailLocation">-</p>
+                </div>
+                <div class="col-span-1 md:col-span-2 bg-slate-900/50 rounded-xl p-4 border border-slate-700">
+                    <p class="text-sm text-slate-400 mb-3 uppercase tracking-wider font-bold">Key Features</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="detailFeatures">
+                        <!-- Features inserted via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <div
+                class="bg-[#1e293b]/50 rounded-2xl shadow-xl p-8 border border-slate-700/50 hover:border-cyan-500/30 transition-colors group">
+                <div
+                    class="h-10 w-10 bg-cyan-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-cyan-500/30 transition-colors">
+                    <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-white">AI Precision</h3>
+                <p class="mt-2 text-base text-slate-400">Advanced Random Forest algorithms trained on thousands of B-17
+                    data points for maximum accuracy.</p>
+            </div>
+            <div
+                class="bg-[#1e293b]/50 rounded-2xl shadow-xl p-8 border border-slate-700/50 hover:border-cyan-500/30 transition-colors group">
+                <div
+                    class="h-10 w-10 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-500/30 transition-colors">
+                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-white">Live Data</h3>
+                <p class="mt-2 text-base text-slate-400">Synced with your personal Firebase database in real-time to
+                    keep your insights fresh.</p>
+            </div>
+        </div>
+
+        <!-- Map Section -->
+        <div
+            class="bg-[#1e293b]/80 shadow-2xl rounded-3xl mb-16 p-1 border border-slate-700/50 relative overflow-hidden">
+            <div
+                class="absolute top-4 left-6 z-10 bg-slate-900/80 backdrop-blur px-4 py-2 rounded-xl border border-cyan-500/30">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    B-17 Community Map
+                </h3>
+            </div>
+            <div class="h-[400px] w-full rounded-[1.3rem] overflow-hidden relative">
+                <div id="communityMap"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="js/home.js"></script>
+</body>
+
+</html>

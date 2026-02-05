@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartEstate | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-glass {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .input-glow:focus {
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+            border-color: #22d3ee;
+        }
+
+        .tab-active {
+            color: #22d3ee;
+            border-bottom: 2px solid #22d3ee;
+        }
+
+        .property-card:hover {
+            border-color: #22d3ee;
+        }
+
+        /* Floating Nav Animation */
+        .nav-item {
+            position: relative;
+            padding: 0.5rem 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #22d3ee, transparent);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-item:hover::after,
+        .nav-item.active::after {
+            width: 100%;
+        }
+
+        .nav-item:hover {
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+        }
+    </style>
+</head>
+
+<body class="text-slate-100 min-h-screen">
+
+    <!-- Modern Floating Navigation -->
+    <div class="fixed top-0 left-0 right-0 z-50">
+        <nav class="max-w-5xl mx-auto nav-glass rounded-b-2xl px-6 py-3 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-bold text-white tracking-tight">Smart<span
+                            class="text-cyan-400">Estate</span></span>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-item text-sm font-medium text-slate-300 transition-colors">Home</a>
+                    <a href="listings.html"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Marketplace</a>
+                    <a href="add-listing.html" id="listPropertyLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">List
+                        Property</a>
+                    <a href="predict.html"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Predictor</a>
+                    <a href="agent-inventory.html" id="inventoryLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Inventory</a>
+                    <a href="profile.html" class="nav-item active text-sm font-medium text-white">Dashboard</a>
+                    <a href="admin.html" id="adminLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Admin</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button id="authLink"
+                        class="text-sm font-bold bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-xl transition-all border border-white/10">Logout</button>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-4 pt-32 pb-12">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div>
+                <h1 class="text-4xl font-bold text-white tracking-tight">User <span
+                        class="text-cyan-400">Dashboard</span></h1>
+                <p class="text-slate-400 mt-2">Manage your account and property listings effortlessly.</p>
+            </div>
+
+            <!-- Dashboard Tabs -->
+            <div class="flex bg-slate-900/50 p-1 rounded-xl border border-slate-700/50 self-start">
+                <button id="tabSettings"
+                    class="px-6 py-2 rounded-lg text-sm font-bold transition-all bg-cyan-600 text-white shadow-lg">
+                    Account Settings
+                </button>
+                <button id="tabListings"
+                    class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white">
+                    My Listings
+                </button>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <section id="sectionSettings" class="space-y-6">
+            <div class="glass-panel rounded-3xl p-8 shadow-2xl">
+                <form id="profileForm" class="space-y-6">
+                    <div id="profileMessage" class="hidden p-4 rounded-xl text-sm font-medium text-center"></div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email
+                                Address</label>
+                            <input type="email" id="userEmail" disabled
+                                class="w-full bg-slate-800/30 border border-slate-700/50 text-slate-500 rounded-xl px-4 py-3 cursor-not-allowed">
+                            <p class="text-[10px] text-slate-600 mt-1 uppercase font-bold tracking-tighter">Verified
+                                Account • Cannot be changed</p>
+                        </div>
+
+                        <div>
+                            <label for="displayName"
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Display
+                                Name</label>
+                            <input type="text" id="displayName" placeholder="Enter your name"
+                                class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none input-glow transition-all">
+                        </div>
+
+                        <div>
+                            <label for="phoneNumber"
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Phone
+                                Number</label>
+                            <input type="tel" id="phoneNumber" placeholder="+92 300 1234567"
+                                class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none input-glow transition-all">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Market
+                                Identity</label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <label class="relative block cursor-pointer group">
+                                    <input type="radio" name="role" value="Buyer" class="peer sr-only">
+                                    <div
+                                        class="p-6 text-center rounded-2xl bg-slate-900/50 border border-slate-700 peer-checked:border-cyan-500 peer-checked:bg-cyan-500/10 transition-all hover:bg-slate-800 flex flex-col items-center gap-3">
+                                        <div
+                                            class="p-3 rounded-full bg-slate-800 group-hover:bg-slate-700 transition-colors">
+                                            <svg class="w-6 h-6 text-slate-400 peer-checked:text-cyan-400" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                            </svg>
+                                        </div>
+                                        <span
+                                            class="text-sm font-bold text-slate-300 peer-checked:text-white">Buyer</span>
+                                    </div>
+                                </label>
+                                <label class="relative block cursor-pointer group">
+                                    <input type="radio" name="role" value="Seller" class="peer sr-only">
+                                    <div
+                                        class="p-6 text-center rounded-2xl bg-slate-900/50 border border-slate-700 peer-checked:border-cyan-500 peer-checked:bg-cyan-500/10 transition-all hover:bg-slate-800 flex flex-col items-center gap-3">
+                                        <div
+                                            class="p-3 rounded-full bg-slate-800 group-hover:bg-slate-700 transition-colors">
+                                            <svg class="w-6 h-6 text-slate-400 peer-checked:text-cyan-400" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                            </svg>
+                                        </div>
+                                        <span
+                                            class="text-sm font-bold text-slate-300 peer-checked:text-white">Seller</span>
+                                    </div>
+                                </label>
+                                <label class="relative block cursor-pointer group">
+                                    <input type="radio" name="role" value="Agent" class="peer sr-only">
+                                    <div
+                                        class="p-6 text-center rounded-2xl bg-slate-900/50 border border-slate-700 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 transition-all hover:bg-slate-800 flex flex-col items-center gap-3">
+                                        <div
+                                            class="p-3 rounded-full bg-slate-800 group-hover:bg-slate-700 transition-colors">
+                                            <svg class="w-6 h-6 text-slate-400 peer-checked:text-emerald-400"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                        </div>
+                                        <span
+                                            class="text-sm font-bold text-slate-300 peer-checked:text-white">Agent</span>
+                                    </div>
+                                </label>
+                                <label class="relative block cursor-pointer group">
+                                    <input type="radio" name="role" value="Both" class="peer sr-only">
+                                    <div
+                                        class="p-6 text-center rounded-2xl bg-slate-900/50 border border-slate-700 peer-checked:border-cyan-500 peer-checked:bg-cyan-500/10 transition-all hover:bg-slate-800 flex flex-col items-center gap-3">
+                                        <div
+                                            class="p-3 rounded-full bg-slate-800 group-hover:bg-slate-700 transition-colors">
+                                            <svg class="w-6 h-6 text-slate-400 peer-checked:text-cyan-400" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                        </div>
+                                        <span
+                                            class="text-sm font-bold text-slate-300 peer-checked:text-white">Both</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-8 border-t border-slate-700/50">
+                        <button type="submit" id="saveBtn"
+                            class="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.01]">
+                            Save Profile Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Listings Section -->
+        <section id="sectionListings" class="hidden space-y-8">
+            <div id="listingsLoader" class="flex flex-col justify-center items-center h-64 gap-4">
+                <div class="animate-spin rounded-full h-10 w-10 border-2 border-slate-700 border-t-cyan-500"></div>
+                <p class="text-slate-500 text-sm font-medium">Fetching your listings...</p>
+            </div>
+
+            <div id="listingsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
+                <!-- Cards injected via JS -->
+            </div>
+
+            <div id="noResults"
+                class="hidden text-center py-24 glass-panel rounded-3xl border-dashed border-2 border-slate-700">
+                <div class="text-slate-500">
+                    <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                            </path>
+                        </svg>
+                    </div>
+                    <p class="text-2xl font-bold text-white mb-2">No Active Listings</p>
+                    <p class="text-slate-500 mb-8">You haven't posted any properties in B-17 yet.</p>
+                    <a href="add-listing.html"
+                        class="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-cyan-500/20">List
+                        Your First Property</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="js/profile.js"></script>
+</body>
+
+</html>

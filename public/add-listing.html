@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartEstate | List Your Property</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-glass {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Floating Nav Animation */
+        .nav-item {
+            position: relative;
+            padding: 0.5rem 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #22d3ee, transparent);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-item:hover::after,
+        .nav-item.active::after {
+            width: 100%;
+        }
+
+        .nav-item:hover {
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+        }
+
+        .nav-item:hover::after {
+            width: 100%;
+        }
+
+        .input-glow:focus {
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+            border-color: #22d3ee;
+        }
+    </style>
+</head>
+
+<body class="text-slate-100 min-h-screen">
+
+    <!-- Modern Floating Navigation -->
+    <div class="fixed top-0 left-0 right-0 z-50">
+        <nav class="max-w-5xl mx-auto nav-glass rounded-b-2xl px-6 py-3 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-bold text-white tracking-tight">Smart<span
+                            class="text-cyan-400">Estate</span></span>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html"
+                        class="nav-item text-sm font-medium text-slate-300 hover:text-white transition-colors">Home</a>
+                    <a href="listings.html"
+                        class="nav-item text-sm font-medium text-slate-300 hover:text-white transition-colors">Marketplace</a>
+                    <a href="add-listing.html" id="listPropertyLink" style="display: none;"
+                        class="nav-item active text-sm font-medium text-white transition-colors">List Property</a>
+                    <a href="predict.html"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Predictor</a>
+                    <a href="agent-inventory.html" id="inventoryLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Inventory</a>
+                    <a href="profile.html"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Profile</a>
+                    <a href="admin.html" id="adminLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Admin</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <a href="login.html" id="authLink"
+                        class="text-sm font-bold bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-xl transition-all border border-white/10">Login</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <main class="max-w-4xl mx-auto px-4 pt-32 pb-12">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-white mb-2">List Your <span class="text-cyan-400">Property</span></h1>
+            <p class="text-slate-400">Reach thousands of buyers and renters in B-17 Islamabad.</p>
+        </div>
+
+        <div class="glass-panel rounded-3xl p-8 shadow-2xl">
+            <form id="listingForm" class="space-y-8">
+                <div id="listingMessage" class="hidden p-4 rounded-xl text-sm font-medium text-center"></div>
+
+                <!-- Basic Info -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Listing Title</label>
+                        <input type="text" id="title" required
+                            placeholder="e.g., Luxury 5 Bed House for Sale in Block E"
+                            class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none input-glow transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Listing Type</label>
+                        <select id="listingType"
+                            class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none input-glow transition-all">
+                            <option value="Sale">For Sale</option>
+                            <option value="Rent">For Rent</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Asking Price (PKR)</label>
+                        <input type="number" id="price" required placeholder="e.g., 25000000"
+                            class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none input-glow transition-all">
+                    </div>
+                </div>
+
+                <!-- Location & Size -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-700/50">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">B-17 Sector</label>
+                        <select id="sector"
+                            class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none input-glow transition-all">
+                            <option>A</option>
+                            <option>B</option>
+                            <option>C</option>
+                            <option>D</option>
+                            <option>E</option>
+                            <option>F</option>
+                            <option>G</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Block</label>
+                        <input type="text" id="block" required placeholder="e.g., A"
+                            class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none input-glow transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Size (Marla)</label>
+                        <input type="number" id="size" required placeholder="e.g., 10"
+                            class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none input-glow transition-all">
+                    </div>
+                </div>
+
+                <!-- Features -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-700/50">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Bedrooms</label>
+                        <input type="number" id="bedrooms" required
+                            class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none input-glow transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Bathrooms</label>
+                        <input type="number" id="bathrooms" required
+                            class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none input-glow transition-all">
+                    </div>
+
+                    <!-- Image Upload Section -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Property Images</label>
+                        <div id="dropZone"
+                            class="border-2 border-dashed border-slate-700 rounded-2xl p-10 text-center hover:border-cyan-500 hover:bg-cyan-500/5 transition-all cursor-pointer group">
+                            <input type="file" id="imageInput" multiple accept="image/*" class="hidden">
+                            <svg class="w-12 h-12 text-slate-500 mx-auto mb-4 group-hover:text-cyan-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            <p class="text-slate-400">Drag & drop images here or <span
+                                    class="text-cyan-400 font-bold">Browse</span></p>
+                            <p class="text-xs text-slate-600 mt-2">Up to 5 high-quality photos (JPG, PNG)</p>
+                        </div>
+                        <!-- Preview Grid -->
+                        <div id="imagePreview" class="grid grid-cols-3 md:grid-cols-5 gap-4 mt-6"></div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Listing Visibility</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <label
+                                class="relative flex flex-col p-4 glass-panel rounded-2xl cursor-pointer hover:border-cyan-500 transition-all border border-slate-700/50">
+                                <input type="radio" name="visibility" value="Public" checked
+                                    class="absolute top-4 right-4 accent-cyan-400">
+                                <span class="text-xs font-black uppercase tracking-widest text-white mb-1">Public
+                                    Marketplace</span>
+                                <span class="text-[10px] text-slate-500">Visible to all users on the marketplace.</span>
+                            </label>
+                            <label
+                                class="relative flex flex-col p-4 glass-panel rounded-2xl cursor-pointer hover:border-cyan-500 transition-all border border-slate-700/50">
+                                <input type="radio" name="visibility" value="Private"
+                                    class="absolute top-4 right-4 accent-cyan-400">
+                                <span class="text-xs font-black uppercase tracking-widest text-white mb-1">Private
+                                    Inventory</span>
+                                <span class="text-[10px] text-slate-500">Visible only to you in your Agent
+                                    Portal.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Description</label>
+                        <textarea id="description" rows="4"
+                            placeholder="Describe your property (amenities, location highlights, etc.)"
+                            class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none input-glow transition-all"></textarea>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button type="submit" id="submitBtn"
+                        class="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.01]">
+                        Post Property Listing
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script type="module" src="js/add-listing.js"></script>
+</body>
+
+</html>

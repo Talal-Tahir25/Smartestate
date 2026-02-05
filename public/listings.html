@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartEstate | Property Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-glass {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-item {
+            position: relative;
+            padding: 0.5rem 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #22d3ee, transparent);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-item:hover::after,
+        .nav-item.active::after {
+            width: 100%;
+        }
+
+        .nav-item:hover {
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .property-card:hover {
+            border-color: #22d3ee;
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+
+<body class="text-slate-100 min-h-screen">
+
+    <!-- Modern Floating Navigation -->
+    <div class="fixed top-0 left-0 right-0 z-50">
+        <nav class="max-w-5xl mx-auto nav-glass rounded-b-2xl px-6 py-3 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-bold text-white tracking-tight">Smart<span
+                            class="text-cyan-400">Estate</span></span>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html"
+                        class="nav-item text-sm font-medium text-slate-300 hover:text-white transition-colors">Home</a>
+                    <a href="listings.html"
+                        class="nav-item active text-sm font-medium text-white transition-colors">Marketplace</a>
+                    <a href="add-listing.html" id="listPropertyLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">List
+                        Property</a>
+                    <a href="predict.html"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Predictor</a>
+                    <a href="agent-inventory.html" id="inventoryLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Inventory</a>
+                    <a href="profile.html"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Profile</a>
+                    <a href="admin.html" id="adminLink" style="display: none;"
+                        class="nav-item text-sm font-medium text-slate-300 transition-colors">Admin</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <a href="login.html" id="authLink"
+                        class="text-sm font-bold bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-xl transition-all border border-white/10">Login</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 pt-32 pb-12">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+            <div>
+                <h1 class="text-4xl font-bold text-white">Property <span class="text-cyan-400">Marketplace</span></h1>
+                <p class="text-slate-400 mt-2">Browse the best deals in B-17 Islamabad.</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap gap-4">
+                <select id="typeFilter"
+                    class="bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:border-cyan-500">
+                    <option value="All">All Types</option>
+                    <option value="Sale">For Sale</option>
+                    <option value="Rent">For Rent</option>
+                </select>
+                <select id="sectorFilter"
+                    class="bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:border-cyan-500">
+                    <option value="All">All Sectors</option>
+                    <option value="A">Sector A</option>
+                    <option value="B">Sector B</option>
+                    <option value="C">Sector C</option>
+                    <option value="D">Sector D</option>
+                    <option value="E">Sector E</option>
+                    <option value="F">Sector F</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Listings Grid -->
+        <div id="listingsLoader" class="flex justify-center items-center h-64">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+        </div>
+
+        <div id="listingsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
+            <!-- Cards will be injected here -->
+        </div>
+
+        <div id="noResults" class="hidden text-center py-20">
+            <div class="text-slate-500 mb-4">
+                <svg class="w-16 h-16 mx-auto mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                    </path>
+                </svg>
+                <p class="text-xl">No properties found matching your criteria.</p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/listings.js"></script>
+</body>
+
+</html>

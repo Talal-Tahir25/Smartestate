@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    // --- Helper Functions ---
+    
+    // Check if user is the designated Admin
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'admin@estatoai.com';
+    }
+    
+    // Check if user is authenticated
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // --- Collection Rules ---
+
+    // Users: Profiles
+    match /users/{userId} {
+      allow read: if true; // Profles needs to be read for role checking
+      allow write: if isAuth() && request.auth.uid == userId;
+    }
+
+    // Listings: Properties
+    match /listings/{listingId} {
+      // READ: 
+      // 1. If visibility is Public (Anyone)
+      // 2. If user is owner (Agent/Seller)
+      // 3. If user is Admin (Dashboard)
+      allow read: if resource.data.visibility == 'Public'
+                  || (isAuth() && resource.data.uid == request.auth.uid)
+                  || isAdmin();
+
+      // WRITE: Only owner can create/update/delete
+      allow write: if isAuth() && request.auth.uid == request.resource.data.uid;
+      allow delete: if isAuth() && request.auth.uid == resource.data.uid;
+    }
+
+    // Predictions: AI History
+    match /predictions/{predictionId} {
+      // READ: Allow Public Read so the Home Page Graph shows up
+      allow read: if true;
+      
+      // CREATE: Anyone can save a prediction
+      allow create: if true;
+    }
+  }
+}

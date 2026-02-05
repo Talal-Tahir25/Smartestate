@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EstatoAI | Premium House Price Prediction</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="glass-bg"></div>
+    <main>
+        <nav>
+            <div class="logo">Estato<span>AI</span></div>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#">Market Trends</a>
+                <a href="#" class="active">Predictor</a>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <h1>Predict Your Future <span>Home Value</span></h1>
+            <p>Leverage advanced AI to get accurate house price estimates based on real-time market data.</p>
+        </section>
+
+        <section class="predictor">
+            <div class="prediction-card">
+                <form id="predictionForm">
+                    <div class="input-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g. DHA Phase 6, Lahore" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="area">Area (Sq. Ft)</label>
+                            <input type="number" id="area" placeholder="2250" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="bedrooms">Bedrooms</label>
+                            <input type="number" id="bedrooms" placeholder="3" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="bathrooms">Bathrooms</label>
+                        <input type="number" id="bathrooms" placeholder="3" required>
+                    </div>
+                    <button type="submit" id="predictBtn">Get Estimate</button>
+                </form>
+
+                <div id="result" class="result-container hidden">
+                    <div class="divider"></div>
+                    <h3>Estimated Value</h3>
+                    <div class="price-badge">
+                        <span id="predictedPrice">---</span>
+                        <span class="currency">PKR</span>
+                    </div>
+                    <p class="disclaimer">*Estimate based on current market trends and mock data.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="js/script.js"></script>
+</body>
+
+</html>

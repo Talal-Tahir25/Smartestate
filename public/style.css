@@ -1,0 +1,9 @@
+/* 
+ * Styles are now handled by Tailwind CSS (CDN).
+ * This file is kept empty or for minimal custom overrides if needed.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Outfit', sans-serif;
+}
