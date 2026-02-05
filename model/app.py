@@ -6,7 +6,7 @@ import json
 import os
 import numpy as np
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../public", static_url_path="/")
 CORS(app) # Enable CORS for frontend
 
 # Paths
@@ -29,6 +29,16 @@ try:
 except Exception as e:
     print(f"Error loading model: {e}")
     model = None
+
+# Serve Frontend
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
+
+# Serve other pages (like predict.html)
+@app.route('/<path:path>')
+def static_proxy(path):
+    return app.send_static_file(path)
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -73,4 +83,5 @@ def health():
     return jsonify({"status": "running", "model_loaded": model is not None})
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
