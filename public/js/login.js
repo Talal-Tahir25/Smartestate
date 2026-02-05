@@ -37,7 +37,7 @@ toggleAuth.addEventListener('click', (e) => {
         document.getElementById('roleField').classList.add('hidden'); // Hide Role
     } else {
         authTitle.innerHTML = 'Create <span>Account</span>';
-        authBtn.textContent = 'Join EstatoAI';
+        authBtn.textContent = 'Join SmarteState';
         toggleText.textContent = "Already have an account?";
         toggleAuth.textContent = 'Sign In';
         document.getElementById('roleField').classList.remove('hidden'); // Show Role
@@ -105,7 +105,7 @@ authForm.addEventListener('submit', async (e) => {
         showMessage(errorMsg, 'var(--accent)');
     } finally {
         authBtn.disabled = false;
-        authBtn.textContent = isLoginMode ? 'Sign In' : 'Join EstatoAI';
+        authBtn.textContent = isLoginMode ? 'Sign In' : 'Join SmarteState';
     }
 });
 
