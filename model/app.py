@@ -41,6 +41,7 @@ def static_proxy(path):
     return app.send_static_file(path)
 
 @app.route('/predict', methods=['POST'])
+@app.route('/api/predict', methods=['POST'])
 def predict():
     if not model:
         return jsonify({"error": "Model not loaded. Train the model first."}), 500
