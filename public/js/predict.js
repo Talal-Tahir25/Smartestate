@@ -202,8 +202,10 @@ function renderResultChart(price) {
     const seed = parseFloat(price.toString().split('').slice(-3).join('')) / 1000;
     const marketAvg = price * (0.98 + (seed * 0.04)); // -2% to +2% shift based on price "personality"
 
+    Chart.register(ChartDataLabels);
     resultChart = new Chart(ctx, {
         type: 'bar',
+        plugins: [ChartDataLabels],
         data: {
             labels: ['Your Estimate', 'Market Average'],
             datasets: [{
@@ -224,7 +226,26 @@ function renderResultChart(price) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    top: 30
+                }
+            },
             plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    color: function(context) {
+                        return context.dataIndex === 0 ? '#22d3ee' : '#cbd5e1';
+                    },
+                    font: {
+                        weight: 'bold',
+                        size: 16
+                    },
+                    formatter: function (value) {
+                        return new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumFractionDigits: 0 }).format(value);
+                    }
+                },
                 legend: { display: false },
                 tooltip: {
                     backgroundColor: 'rgba(15, 23, 42, 0.9)',
