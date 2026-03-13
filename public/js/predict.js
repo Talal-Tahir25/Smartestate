@@ -134,8 +134,8 @@ if (predictionForm) {
                 "Distance2CommercialAreaKM": parseFloat(getVal('Distance2CommercialAreaKM')) || 1
             };
 
-            // Send to Python API
-            const response = await fetch('/predict', {
+            // Send to Python API via Node.js proxy
+            const response = await fetch('/api/predict', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(apiPayload)

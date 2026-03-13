@@ -31,8 +31,7 @@
             z-index: 1;
         }
 
-        /* Dark Mode Map Tiles Filter */
-        .leaflet-layer,
+        /* Dark Mode Map Tiles - No Filter needed for CartoDB Dark */
         .leaflet-control-zoom-in,
         .leaflet-control-zoom-out,
         .leaflet-control-attribution {
@@ -44,7 +43,8 @@
         }
 
         .nav-glass {
-            background: rgba(15, 23, 42, 0.65);
+            background: rgba(15, 23, 42, 0.85);
+            /* Slightly darker for better contrast */
             backdrop-filter: blur(16px) saturate(180%);
             -webkit-backdrop-filter: blur(16px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -52,65 +52,22 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* ... existing nav styles ... */
         .nav-item {
             position: relative;
             padding: 0.5rem 0.25rem;
             transition: all 0.3s ease;
         }
 
-        .nav-item::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #22d3ee, transparent);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-
-        .nav-item:hover::after,
-        .nav-item.active::after {
-            width: 100%;
-        }
-
-        .nav-item:hover {
-            color: #ffffff;
-            text-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-4px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .nav-item:hover::after {
-            width: 100%;
-        }
-
-        .hero-gradient {
-            background: radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.15) 0%, transparent 50%);
-        }
+        /* ... */
     </style>
 </head>
 
 <body class="text-slate-100">
 
     <!-- Navigation -->
-    <!-- Modern Floating Navigation -->
-    <div class="fixed top-0 left-0 right-0 z-50">
+    <!-- Modern Navigation (Absolute: Stays at top of content) -->
+    <div class="absolute top-0 left-0 right-0 z-50">
         <nav class="max-w-5xl mx-auto nav-glass rounded-b-2xl px-6 py-3 shadow-2xl">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -244,7 +201,7 @@
         </div>
 
         <!-- Features Grid -->
-        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 mb-16">
             <div
                 class="bg-[#1e293b]/50 rounded-2xl shadow-xl p-8 border border-slate-700/50 hover:border-cyan-500/30 transition-colors group">
                 <div
